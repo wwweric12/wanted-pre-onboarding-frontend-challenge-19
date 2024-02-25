@@ -1,12 +1,18 @@
 import styled from 'styled-components';
 import './App.css';
 import Input from './components/Input/Input';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import Button from './components/Button/\bButton';
+
+interface TodosValue{
+  id: number,
+  todo: string
+}
 
 function App() {
   const [todo,setTodo]=useState<string>("");
-  const [todos,setTodos]=useState<string[]>([]);
-
+  const [todos,setTodos]=useState<TodosValue[]>([]);
+  const idValue = useRef(1);
   const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setTodo(e.target.value);
   }
@@ -14,8 +20,16 @@ function App() {
   const handleTodoInput = (e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
     setTodo("");
-    setTodos([...todos, todo]);
-    console.log(todos)
+    const todoValues ={
+      id: idValue.current++,
+      todo,
+    }
+    setTodos([...todos, todoValues]);
+  }
+
+  const handleDeleteTodo=(id:number)=>{
+    const newTodos=todos.filter((item)=> item.id !==id )
+    setTodos(newTodos)
   }
 
   return (
@@ -23,13 +37,13 @@ function App() {
       <TodoTitle>Todo List</TodoTitle>
       <TodoForm onSubmit={handleTodoInput}>
         <Input placeholder='input' handleChange={handleChange} value={todo}/>
-        <Button type="submit"> add </Button>
+        <Button> add </Button>
       </TodoForm>
       <TodoListContainer>
         {todos.map((item)=>(
-          <TodoListBox>
-            <TodoList>{item}</TodoList>
-            <Button type="submit">delete</Button>
+          <TodoListBox key={item.id}>
+            <TodoList >{item.todo}</TodoList>
+            <Button onClick={()=>handleDeleteTodo(item.id)} >delete</Button>
           </TodoListBox>
         ))}
       </TodoListContainer>  
@@ -59,12 +73,7 @@ const TodoForm = styled.form`
   gap:10px;
   margin-bottom: 10px;
 `
-const Button = styled.button`
-  width:100px;
-  height: 50px;
-  border : 1px solid black;
-  border-radius: 10px;
-`
+
 const TodoListContainer =styled.div`
   display: flex;
   flex-direction: column;
@@ -73,7 +82,7 @@ const TodoListContainer =styled.div`
 `
 
 
-const TodoListBox = styled.div`
+const TodoListBox = styled.ul`
   width:500px;
   height: 70px;
   display  :flex ;
@@ -84,7 +93,7 @@ const TodoListBox = styled.div`
   border-radius: 10px;
 `
 
-const TodoList = styled.div`
+const TodoList = styled.li`
   display: flex;
   align-items: center;
 
