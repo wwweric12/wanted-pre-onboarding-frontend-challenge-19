@@ -2,12 +2,14 @@ import styled from "styled-components"
 
 interface InputProps{
   placeholder : string
+  value?: string;
+  handleChange?:(e: React.ChangeEvent<HTMLInputElement>)=>void
 }
 
-const Input = ({placeholder}:InputProps) => {
+const Input = ({placeholder,handleChange,value}:InputProps) => {
   return (
     <InputContainer>
-        <InputContent placeholder={placeholder}/>
+        <InputContent placeholder={placeholder} onChange={handleChange} value={value}/>
     </InputContainer>
   )
 }
