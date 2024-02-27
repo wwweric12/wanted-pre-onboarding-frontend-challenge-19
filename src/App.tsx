@@ -1,18 +1,17 @@
 import styled from 'styled-components';
 import './App.css';
 import Input from './components/Input/Input';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Button from './components/Button/\bButton';
-
-interface TodosValue{
-  id: number,
-  todo: string
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { addTodo, deleteTodo } from './store/slice/slice';
+import { RootState } from './store/store';
 
 function App() {
   const [todo,setTodo]=useState<string>("");
-  const [todos,setTodos]=useState<TodosValue[]>([]);
-  const idValue = useRef(1);
+  const dispatch = useDispatch();
+  const todos = useSelector((state:RootState)=>state.todos);
+
   const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setTodo(e.target.value);
   }
@@ -20,16 +19,11 @@ function App() {
   const handleTodoInput = (e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault()
     setTodo("");
-    const todoValues ={
-      id: idValue.current++,
-      todo,
-    }
-    setTodos([...todos, todoValues]);
+    dispatch(addTodo(todo))
   }
 
   const handleDeleteTodo=(id:number)=>{
-    const newTodos=todos.filter((item)=> item.id !==id )
-    setTodos(newTodos)
+      dispatch(deleteTodo(id))
   }
 
   return (
@@ -40,7 +34,7 @@ function App() {
         <Button> add </Button>
       </TodoForm>
       <TodoListContainer>
-        {todos.map((item)=>(
+        {todos.todoList.map((item)=>(
           <TodoListBox key={item.id}>
             <TodoList >{item.todo}</TodoList>
             <Button onClick={()=>handleDeleteTodo(item.id)} >delete</Button>
