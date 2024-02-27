@@ -18,7 +18,10 @@ const Todo = () => {
     const handleTodoInput = (e: React.FormEvent<HTMLFormElement>) =>{
       e.preventDefault()
       setTodo("");
-      dispatch(addTodo(todo))
+      if(todo.trim() !==''){  
+        dispatch(addTodo(todo))
+      }
+      
     }
   
     const handleDeleteTodo=(id:number)=>{
